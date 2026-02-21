@@ -672,8 +672,7 @@
     function renderGoogleBtn() {
       if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('TU_')) {
         document.getElementById('google-btn-wrap').innerHTML =
-          '<a href="mailto:fondo@overpass.com" class="btn btn-primary" style="display: inline-block;">Registrarse por email</a>' +
-          '<p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">Para activar «Continuar con Google»: creá credenciales en <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> y reemplazá <code>GOOGLE_CLIENT_ID</code> en el código.</p>';
+          '<a href="mailto:fondo@overpass.com" class="btn btn-primary" style="display: inline-block;">Registrarse por email</a>';
         return;
       }
       google.accounts.id.initialize({
