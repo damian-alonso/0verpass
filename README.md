@@ -1,236 +1,125 @@
-# 0verpass — Documentación del proyecto
+# 0verpass (climbing-wall) — Documentación técnica
 
-Proyecto completo del **muro de escalada 0verpass**, ubicado frente a las vías de Haedo (Buenos Aires). Incluye una landing page pública, base de datos para el registro de pagos (mensual/diario) y una aplicación Java para el empleador.
-
----
-
-## Índice
-
-1. [Qué es este proyecto](#qué-es-este-proyecto)
-2. [Estructura de archivos](#estructura-de-archivos)
-3. [Landing page (sitio web)](#landing-page-sitio-web)
-4. [Base de datos MySQL](#base-de-datos-mysql)
-5. [Aplicación Java (registro de pagos)](#aplicación-java-registro-de-pagos)
-6. [Scripts y utilidades](#scripts-y-utilidades)
+Proyecto de muro de escalada: landing page estática (con tienda de venta/alquiler de material), base de datos MySQL para registro de pagos (mensual/diario) y aplicación Java de consola.
 
 ---
 
-## Qué es este proyecto
+## Stack
 
-- **0verpass** es el nombre del muro de escalada.
-- **Landing page**: sitio de una sola página con información del muro, gimnasio, horarios, registro con Google y contacto.
-- **Base de datos**: MySQL en Docker para llevar el registro de personas que pagan **mensualmente** o **diariamente**.
-- **App Java**: programa de consola para el empleador que lista personas, pagos y genera resúmenes de cobros.
-
-Todo está en una sola carpeta (`climbing-wall`) para tener el proyecto ordenado.
+| Componente   | Tecnología |
+|-------------|------------|
+| Frontend    | HTML5, CSS (inline), JavaScript (vanilla). Google Identity Services (opcional). |
+| Base de datos | MySQL 8.0 (Docker). |
+| Backend     | Java 17, Maven. MySQL Connector/J 8.4.0, HikariCP 5.1.0. |
 
 ---
 
-## Estructura de archivos
+## Estructura del proyecto
 
 ```
 climbing-wall/
-│
-├── index.html              # Landing page del muro
-├── docker-compose.yml      # Configuración de MySQL en Docker
-├── init.sql                # Script SQL: crea tablas y datos de ejemplo
-├── pom.xml                 # Proyecto Maven (Java): dependencias y build
-├── servir.bat              # En Windows: sirve la web en http://localhost:8080
-├── README.md               # Este archivo — documentación general
-├── README-BD.md            # Instrucciones rápidas de base de datos y Java
-│
+├── index.html
+├── docker-compose.yml
+├── init.sql
+├── pom.xml
+├── servir.bat
 └── src/main/
-    ├── java/com/overpass/          # Código Java
-    │   ├── Main.java               # Punto de entrada: lista personas, pagos y resumen
-    │   ├── dao/
-    │   │   ├── PersonaDao.java     # Acceso a datos de personas
-    │   │   └── PagoDao.java        # Acceso a datos de pagos
-    │   ├── db/
-    │   │   └── DataSource.java     # Conexión a MySQL (HikariCP)
-    │   └── model/
-    │       ├── Persona.java        # Modelo: cliente del muro
-    │       └── Pago.java           # Modelo: un pago (mensual o diario)
-    │
-    └── resources/
-        └── application.properties  # URL, usuario y contraseña de MySQL
+    ├── java/com/overpass/
+    │   ├── Main.java
+    │   ├── dao/PersonaDao.java
+    │   ├── dao/PagoDao.java
+    │   ├── db/DataSource.java
+    │   └── model/Persona.java, Pago.java
+    └── resources/application.properties
 ```
 
 ---
 
-## Landing page (sitio web)
+## Base de datos
 
-**Archivo:** `index.html`
+**Servicio:** MySQL 8.0 en contenedor. Puerto **3306**. Base **0verpass**. Usuario/contraseña definidos en `docker-compose.yml` y en `application.properties`. Inicialización vía `init.sql` en `/docker-entrypoint-initdb.d/`.
 
-Página única con diseño violeta y negro (estilo “Violent Daimyo”). Todo el CSS está dentro del mismo archivo.
+### Esquema
 
-### Diseño y tipografía
+**Tabla `persona`**
 
-- **Paleta:** fondo negro (#0a0a0c), acentos violetas (#7c3aed, #8b5cf6, #a78bfa), texto claro (#f5f3ff) — inspirada en la skin Violent Daimyo de CS.
-- **Nombre “0verpass” (logo y título principal):** tipografía **Permanent Marker** (Google Fonts) con efecto tipo graffiti/spray de Counter-Strike: sombras negras de contorno, halo violeta (overspray), borde con `-webkit-text-stroke` y `drop-shadow` para simular pintura en la pared. El resto de títulos de sección usa **Bebas Neue**; el cuerpo **Outfit**.
-- **Contacto y footer:** contenido centrado (`.cta-inner` en la sección de contacto, footer en columna centrada).
+| Columna       | Tipo         | Restricciones |
+|---------------|--------------|---------------|
+| id            | INT          | PK, AUTO_INCREMENT |
+| nombre        | VARCHAR(100) | NOT NULL |
+| apellido      | VARCHAR(100) | NOT NULL |
+| email         | VARCHAR(255) | NOT NULL, UNIQUE |
+| telefono      | VARCHAR(30)  | NULL |
+| documento     | VARCHAR(30)  | NULL |
+| fecha_alta    | DATETIME     | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
+| activo        | TINYINT(1)   | NOT NULL, DEFAULT 1 |
+| observaciones | TEXT         | NULL |
+
+**Tabla `pago`**
+
+| Columna        | Tipo           | Restricciones |
+|----------------|----------------|---------------|
+| id             | INT            | PK, AUTO_INCREMENT |
+| persona_id     | INT            | NOT NULL, FK → persona(id), ON DELETE RESTRICT |
+| tipo           | ENUM('MENSUAL','DIARIO') | NOT NULL |
+| monto          | DECIMAL(10,2)  | NOT NULL |
+| fecha_pago     | DATE           | NOT NULL |
+| vigencia_desde | DATE           | NOT NULL |
+| vigencia_hasta | DATE           | NOT NULL |
+| medio_pago     | VARCHAR(50)    | NULL |
+| created_at     | DATETIME       | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
+
+**Índices:** `idx_pago_persona` (persona_id), `idx_pago_tipo` (tipo), `idx_pago_fecha` (fecha_pago), `idx_pago_vigencia` (vigencia_desde, vigencia_hasta), `idx_persona_activo` (activo). `init.sql` incluye datos de ejemplo.
+
+---
+
+## Aplicación Java
+
+- **GroupId / ArtifactId:** `com.overpass` / `0verpass-registro`. **Versión:** 1.0.0.
+- **Clase principal:** `com.overpass.Main`.
+- **Encoding:** UTF-8. **Java:** 17.
+
+### Dependencias (pom.xml)
+
+- `com.mysql:mysql-connector-j:8.4.0`
+- `com.zaxxer:HikariCP:5.1.0`
+
+### Paquetes y responsabilidades
+
+- **`com.overpass.db.DataSource`** — Carga `application.properties`, configura HikariCP y expone un `javax.sql.DataSource` singleton.
+- **`com.overpass.model.Persona`** — Entidad: id, nombre, apellido, email, telefono, documento, fechaAlta (LocalDateTime), activo (boolean), observaciones.
+- **`com.overpass.model.Pago`** — Entidad: id, personaId, tipo (enum MENSUAL/DIARIO), monto (BigDecimal), fechaPago, vigenciaDesde, vigenciaHasta (LocalDate), medioPago, createdAt (LocalDateTime). Opcional: `nombrePersona` para listados con JOIN.
+- **`com.overpass.dao.PersonaDao`** — `findAll()`, `findById(int)`, `findByEmail(String)`, `insert(Persona)`, `update(Persona)`.
+- **`com.overpass.dao.PagoDao`** — `findAllWithPersona()`, `findByTipo(Tipo)`, `findByPersonaId(int)`, `findById(int)`, `insert(Pago)`, `resumenEntre(LocalDate, LocalDate)` (cantidad y total por tipo en el rango).
+- **`com.overpass.Main`** — Punto de entrada: usa los DAOs para listar personas, pagos (con nombre) y resumen del mes actual por consola.
+
+### Configuración Java
+
+**Archivo:** `src/main/resources/application.properties`
+
+| Clave             | Uso |
+|-------------------|-----|
+| jdbc.url          | URL JDBC (host, puerto, base, `serverTimezone=America/Argentina/Buenos_Aires`, encoding). |
+| jdbc.user         | Usuario MySQL. |
+| jdbc.password     | Contraseña MySQL. |
+| jdbc.pool.size    | Tamaño del pool HikariCP (por defecto 5). |
+
+---
+
+## Landing (`index.html`)
+
+- **Tipo:** página única; CSS y JS en el mismo archivo. Sin build.
+- **Servidor local:** `servir.bat` inicia un servidor HTTP (Python) en el puerto **8080** y opcionalmente abre el navegador.
+
+### Configuración en código
+
+- **WhatsApp:** enlace flotante con `href` tipo `https://wa.me/<código_país><número_sin_+>?text=...`. Reemplazar el número en el `href` por el deseado.
+- **Google Sign-In:** variable `GOOGLE_CLIENT_ID` en el script. Si está vacía o con valor placeholder (`TU_CLIENT_ID_...`), se muestra el botón “Registrarse por email” (mailto) en lugar del botón de Google. Script externo: `https://accounts.google.com/gsi/client`.
 
 ### Secciones
 
-| Sección      | Contenido |
-|-------------|-----------|
-| **Hero**    | Nombre “0verpass”, ubicación (frente a las vías de Haedo), eslogan y botones a reserva y actividades. |
-| **Servicios** | Búlder, vías con cuerda, cursos y talleres. |
-| **Gimnasio**  | Zona de entrenamiento: fingerboard, Pan Gullich/campus, pesas y kettlebells, mobility y estiramiento. |
-| **Horarios**  | Lunes a viernes y fines de semana. |
-| **Registro**  | “Registrarse / Continuar con Google”. Si no hay Client ID configurado, se muestra “Registrarse por email”. |
-| **Contacto**  | Email (fondo@overpass.com), ubicación y enlace a WhatsApp para consultas. |
-| **Footer**    | Copyright y teléfono. |
-| **WhatsApp**  | Botón flotante (esquina inferior derecha) «Consultas por WhatsApp» que abre un chat con mensaje predeterminado. El número se configura en el `href` del enlace (formato `wa.me/5491112345678`). |
+- Hero, Servicios, Gimnasio, **Tienda**, Horarios, Registro, Contacto. **Tienda:** grid de productos (arnés, zapatillas de escalada, asegurador, cuerda) con precio de venta y alquiler por día; botón «Consultar» abre WhatsApp con mensaje predefinido por producto.
 
-### Registro con Google
+### Comportamiento
 
-- Usa **Google Identity Services** (cuenta de Google).
-- Para que funcione el botón “Continuar con Google” hay que crear un **Client ID** en [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (tipo “Aplicación web”) y reemplazar en `index.html` la variable `GOOGLE_CLIENT_ID`.
-- Si no se configura, se muestra un botón de “Registrarse por email” (fondo@overpass.com) y un texto explicando cómo activar Google.
-- Al iniciar sesión con Google se guardan nombre, email y foto en `localStorage` y se muestra un “badge” de usuario; hay opción de cerrar sesión.
-
-### Cómo ver la web
-
-- **Opción 1:** Doble clic en `servir.bat` (necesitas Python instalado). Abre el navegador en `http://localhost:8080`.
-- **Opción 2:** Abrir `index.html` directamente con el navegador (archivo local).
-
----
-
-## Base de datos MySQL
-
-**Archivos:** `docker-compose.yml`, `init.sql`
-
-MySQL se ejecuta en un contenedor Docker. Al crear el contenedor por primera vez, se ejecuta `init.sql` y se crean las tablas y datos de ejemplo.
-
-### docker-compose.yml
-
-- Servicio: **MySQL 8.0**.
-- Puerto expuesto: **3306**.
-- Base de datos: **0verpass**.
-- Usuario: **0verpass** / contraseña: **0verpass**.
-- El script `init.sql` se monta en `/docker-entrypoint-initdb.d/` para que se ejecute al inicializar el contenedor.
-
-### init.sql
-
-- Crea la base `0verpass` y las tablas:
-
-| Tabla    | Uso |
-|----------|-----|
-| **persona** | Clientes: nombre, apellido, email, teléfono, documento, fecha de alta, activo, observaciones. |
-| **pago**    | Cada cobro: persona, tipo (MENSUAL o DIARIO), monto, fecha de pago, vigencia desde/hasta, medio de pago. |
-
-- Incluye índices para búsquedas por persona, tipo de pago y fechas.
-- Inserta 3 personas y 3 pagos de ejemplo.
-
-### Conexión
-
-| Dato        | Valor      |
-|-------------|------------|
-| Host        | localhost  |
-| Puerto      | 3306       |
-| Base        | 0verpass   |
-| Usuario     | 0verpass   |
-| Contraseña  | 0verpass   |
-
----
-
-## Aplicación Java (registro de pagos)
-
-**Carpeta/código:** `src/main/java/...`, `pom.xml`, `src/main/resources/application.properties`
-
-Aplicación de consola para el empleador: lista personas, listado de pagos y resumen de cobros en un rango de fechas.
-
-### pom.xml
-
-- **Java 17**
-- Dependencias: **MySQL Connector/J**, **HikariCP** (pool de conexiones).
-- Plugins: `maven-jar-plugin` (JAR ejecutable), `exec-maven-plugin` (ejecutar con `mvn exec:java`).
-- Clase principal: `com.overpass.Main`.
-
-### application.properties
-
-- URL JDBC a `localhost:3306/0verpass`, usuario y contraseña.
-- Zona horaria: `America/Argentina/Buenos_Aires`.
-- Tamaño del pool HikariCP (por defecto 5).
-
-### Modelos
-
-- **Persona:** id, nombre, apellido, email, teléfono, documento, fecha de alta, activo, observaciones.
-- **Pago:** id, persona, tipo (MENSUAL/DIARIO), monto, fechas de pago y vigencia, medio de pago; opcionalmente nombre de la persona para listados.
-
-### DAOs (acceso a datos)
-
-- **PersonaDao:** `findAll`, `findById`, `findByEmail`, `insert`, `update`.
-- **PagoDao:** `findAllWithPersona`, `findByTipo`, `findByPersonaId`, `findById`, `insert`, `resumenEntre(desde, hasta)` (cantidad y total de mensuales y diarios en un rango de fechas).
-
-### DataSource
-
-- **DataSource.java:** lee `application.properties`, configura HikariCP y expone un `DataSource` para que los DAOs obtengan conexiones.
-
-### Main.java
-
-- Obtiene listas de personas y de pagos (con nombre de persona).
-- Calcula el resumen del mes actual (mensuales y diarios).
-- Imprime todo por consola.
-
-### Cómo ejecutar
-
-Desde la carpeta `climbing-wall` (con MySQL en marcha):
-
-```bash
-mvn compile exec:java -q -Dexec.mainClass="com.overpass.Main"
-```
-
-O generar el JAR y ejecutarlo:
-
-```bash
-mvn package -q
-java -jar target/0verpass-registro-1.0.0.jar
-```
-
----
-
-## Scripts y utilidades
-
-### servir.bat
-
-- **Qué hace:** inicia un servidor HTTP con Python en el puerto **8080** y abre el navegador en `http://localhost:8080`.
-- **Requisito:** tener Python instalado y en el PATH.
-- **Uso:** ejecutar por doble clic o desde la terminal dentro de `climbing-wall`.
-
-### README-BD.md
-
-- Resumen rápido: levantar MySQL con Docker, ejecutar la app Java, estructura de tablas y comandos útiles.
-
----
-
-## Poner todo en marcha
-
-### 1. Ver la landing
-
-```bash
-# Opción A: con script (abre navegador)
-servir.bat
-
-# Opción B: abrir index.html con el navegador
-```
-
-### 2. Base de datos (para la app Java)
-
-```bash
-docker-compose up -d
-docker ps   # comprobar que el contenedor está en marcha
-```
-
-### 3. App Java (registro de pagos)
-
-```bash
-mvn compile exec:java -q -Dexec.mainClass="com.overpass.Main"
-```
-
-### 4. Detener MySQL
-
-```bash
-docker-compose down
-# Con datos incluidos: docker-compose down -v
-```
+- Sesión de usuario (nombre, email, foto) en `localStorage` bajo la clave `0verpass_user`. Badge de usuario y opción de cerrar sesión cuando hay sesión guardada.

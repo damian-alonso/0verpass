@@ -386,6 +386,72 @@
       opacity: 0.9;
     }
 
+    /* Tienda */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--stone-border);
+      padding: 1.75rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 40px rgba(124, 58, 237, 0.15);
+    }
+
+    .product-card .product-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .product-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--chalk);
+    }
+
+    .product-card .product-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .product-card .price-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .product-card .price-row span {
+      color: var(--text);
+    }
+
+    .product-card .price-row strong {
+      color: var(--accent);
+    }
+
+    .product-card .btn-small {
+      padding: 0.6rem 1.25rem;
+      font-size: 0.8rem;
+      margin-top: auto;
+    }
+
     /* Horarios */
     #horarios {
       padding: 6rem 3rem;
@@ -548,6 +614,7 @@
     <ul class="nav-links">
       <li><a href="#servicios">Servicios</a></li>
       <li><a href="#gimnasio">Gimnasio</a></li>
+      <li><a href="#tienda">Tienda</a></li>
       <li><a href="#horarios">Horarios</a></li>
       <li><a href="#registro">Registro</a></li>
       <li><a href="#contacto">Contacto</a></li>
@@ -617,6 +684,53 @@
           <h4>Mobility y estiramiento</h4>
           <p>Espacio para movilidad, flexibilidad y recuperación entre bloques.</p>
         </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="tienda">
+    <h2 class="section-title">Tienda</h2>
+    <p class="section-subtitle">Venta y alquiler de material de escalada. Precios moderados.</p>
+    <div class="shop-grid">
+      <article class="product-card">
+        <div class="product-icon">🪢</div>
+        <h3>Arnés</h3>
+        <p class="product-desc">Arnés de escalada regulable, cómodo para búlder y vías. Tallas S a XL.</p>
+        <div class="price-row">
+          <span>Venta <strong>$28.000</strong></span>
+          <span>Alquiler <strong>$900</strong>/día</span>
+        </div>
+        <a href="https://wa.me/5491112345678?text=Hola%2C%20me%20interesa%20el%20arn%C3%A9s%20(venta%20o%20alquiler)" class="btn btn-primary btn-small" target="_blank" rel="noopener">Consultar</a>
+      </article>
+      <article class="product-card">
+        <div class="product-icon">👟</div>
+        <h3>Zapatillas de escalada</h3>
+        <p class="product-desc">Pies de gato para búlder y vías. Varias tallas. Ideales para empezar.</p>
+        <div class="price-row">
+          <span>Venta <strong>$35.000</strong></span>
+          <span>Alquiler <strong>$700</strong>/día</span>
+        </div>
+        <a href="https://wa.me/5491112345678?text=Hola%2C%20me%20interesan%20las%20zapatillas%20de%20escalada%20(venta%20o%20alquiler)" class="btn btn-primary btn-small" target="_blank" rel="noopener">Consultar</a>
+      </article>
+      <article class="product-card">
+        <div class="product-icon">🛡️</div>
+        <h3>Asegurador</h3>
+        <p class="product-desc">Asegurador tipo ATC/Reverso. Para asegurar en vías con cuerda.</p>
+        <div class="price-row">
+          <span>Venta <strong>$9.500</strong></span>
+          <span>Alquiler <strong>$500</strong>/día</span>
+        </div>
+        <a href="https://wa.me/5491112345678?text=Hola%2C%20me%20interesa%20el%20asegurador%20(venta%20o%20alquiler)" class="btn btn-primary btn-small" target="_blank" rel="noopener">Consultar</a>
+      </article>
+      <article class="product-card">
+        <div class="product-icon">⛓️</div>
+        <h3>Cuerda</h3>
+        <p class="product-desc">Cuerda dinámica 40 m. Uso en vías. Revisión y estado controlado.</p>
+        <div class="price-row">
+          <span>Venta <strong>$48.000</strong></span>
+          <span>Alquiler <strong>$1.200</strong>/día</span>
+        </div>
+        <a href="https://wa.me/5491112345678?text=Hola%2C%20me%20interesa%20la%20cuerda%20(venta%20o%20alquiler)" class="btn btn-primary btn-small" target="_blank" rel="noopener">Consultar</a>
       </article>
     </div>
   </section>
