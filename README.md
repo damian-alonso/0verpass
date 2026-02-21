@@ -12,8 +12,6 @@ Proyecto completo del **muro de escalada 0verpass**, ubicado frente a las vías 
 4. [Base de datos MySQL](#base-de-datos-mysql)
 5. [Aplicación Java (registro de pagos)](#aplicación-java-registro-de-pagos)
 6. [Scripts y utilidades](#scripts-y-utilidades)
-7. [Poner todo en marcha](#poner-todo-en-marcha)
-8. [Subir a GitHub y ver la página](#subir-a-github-y-ver-la-página)
 
 ---
 
@@ -236,72 +234,3 @@ mvn compile exec:java -q -Dexec.mainClass="com.overpass.Main"
 docker-compose down
 # Con datos incluidos: docker-compose down -v
 ```
-
----
-
-## Subir a GitHub y ver la página
-
-Para subir el proyecto a GitHub y dejar la landing visible en internet con **GitHub Pages**:
-
-### 1. Crear un repositorio en GitHub
-
-1. Entrá a [github.com](https://github.com) e iniciá sesión (o creá una cuenta).
-2. Clic en **“New”** / **“New repository”**.
-3. Nombre del repo (ej. `0verpass` o `climbing-wall`).
-4. Dejalo **público**, sin marcar “Add a README” (ya tenés uno).
-5. Clic en **“Create repository”**.
-
-### 2. Subir el proyecto desde tu PC
-
-En la terminal, desde la carpeta del proyecto:
-
-```bash
-cd C:\Users\drub\climbing-wall
-
-git init
-git add .
-git commit -m "Proyecto 0verpass: landing, BD MySQL, app Java"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/NOMBRE_DEL_REPO.git
-git push -u origin main
-```
-
-Reemplazá `TU_USUARIO` por tu usuario de GitHub y `NOMBRE_DEL_REPO` por el nombre del repositorio que creaste. Si GitHub te pide autenticación, usá un **Personal Access Token** (Settings → Developer settings → Personal access tokens) en lugar de la contraseña.
-
-### 3. Activar GitHub Pages para que se vea la web
-
-1. En GitHub, abrí el repositorio.
-2. **Settings** → en el menú izquierdo **Pages**.
-3. En **“Source”** elegí **“Deploy from a branch”**.
-4. En **“Branch”** elegí **main** y carpeta **/ (root)**.
-5. Guardá con **Save**.
-
-En unos minutos la página quedará publicada en:
-
-**`https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/`**
-
-Por ejemplo: `https://miusuario.github.io/0verpass/`
-
-Ahí se verá el `index.html` (la landing de 0verpass). Cada vez que hagas `git push` a `main`, la página se actualizará sola.
-
----
-
-## Resumen por archivo
-
-| Archivo / carpeta | Qué es |
-|-------------------|--------|
-| **index.html** | Landing del muro: diseño Violent Daimyo, tipografía graffiti (Permanent Marker) para “0verpass”, servicios, gimnasio, horarios, registro con Google, contacto (fondo@overpass.com), WhatsApp flotante. |
-| **docker-compose.yml** | Define el contenedor MySQL (puerto 3306, base 0verpass). |
-| **init.sql** | Crea tablas `persona` y `pago` e inserta datos de ejemplo. |
-| **pom.xml** | Proyecto Maven (Java 17, MySQL, HikariCP). |
-| **application.properties** | Configuración de conexión a MySQL para la app Java. |
-| **Main.java** | Entrada de la app: lista personas, pagos y resumen del mes. |
-| **PersonaDao.java** | CRUD y búsquedas de personas. |
-| **PagoDao.java** | Altas y consultas de pagos; resumen por fechas. |
-| **Persona.java** / **Pago.java** | Modelos de datos. |
-| **DataSource.java** | Pool de conexiones a MySQL. |
-| **servir.bat** | Sirve la web en el puerto 8080 y abre el navegador. |
-| **README.md** | Este documento. |
-| **README-BD.md** | Guía corta de base de datos y Java. |
-
-Si querés ampliar alguna parte (por ejemplo solo la web, solo la BD o solo Java), se puede agregar una sección más detallada en este mismo README.
