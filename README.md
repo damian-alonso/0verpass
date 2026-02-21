@@ -31,7 +31,7 @@ Todo está en una sola carpeta (`climbing-wall`) para tener el proyecto ordenado
 ```
 climbing-wall/
 │
-├── index.html              # Landing page del muro (abrir en navegador)
+├── index.html              # Landing page del muro
 ├── docker-compose.yml      # Configuración de MySQL en Docker
 ├── init.sql                # Script SQL: crea tablas y datos de ejemplo
 ├── pom.xml                 # Proyecto Maven (Java): dependencias y build
