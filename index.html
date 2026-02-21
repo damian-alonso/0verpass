@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>0verpass — Muro de Escalada | Frente a las vías de Haedo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700&family=Permanent+Marker&family=Bungee+Shade&display=swap" rel="stylesheet">
+  <style>
+    /* Violent Daimyo: violeta + negro */
+    :root {
+      --bg-dark: #0a0a0c;
+      --bg-card: #12121a;
+      --accent: #7c3aed;
+      --accent-soft: #8b5cf6;
+      --accent-glow: #a78bfa;
+      --stone: #1e1e28;
+      --stone-border: #2d2d3a;
+      --chalk: #f5f3ff;
+      --text: #e2e0ef;
+      --text-muted: #8b87a0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: 
+        linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 50%),
+        var(--bg-dark);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(167, 139, 250, 0.03) 2px,
+          rgba(167, 139, 250, 0.03) 4px
+        );
+      pointer-events: none;
+    }
+
+    /* Estilo graffiti / spray tipo Counter-Strike para el nombre */
+    .graffiti-text {
+      font-family: 'Permanent Marker', cursive;
+      color: var(--chalk);
+      text-shadow:
+        2px 2px 0 rgba(0, 0, 0, 0.9),
+        -1px -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(124, 58, 237, 0.6),
+        0 0 40px rgba(124, 58, 237, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        0 6px 2px rgba(124, 58, 237, 0.3);
+      -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4);
+      paint-order: stroke fill;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: clamp(4rem, 15vw, 10rem);
+      letter-spacing: 0.06em;
+      color: var(--chalk);
+      text-shadow:
+        3px 3px 0 rgba(0, 0, 0, 0.95),
+        -2px -2px 0 rgba(0, 0, 0, 0.85),
+        0 0 30px rgba(124, 58, 237, 0.7),
+        0 0 60px rgba(124, 58, 237, 0.4),
+        0 0 100px rgba(124, 58, 237, 0.2),
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        0 8px 4px rgba(139, 92, 246, 0.25);
+      -webkit-text-stroke: 2px rgba(0, 0, 0, 0.5);
+      paint-order: stroke fill;
+      margin-bottom: 0.2em;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    }
+
+    .hero .tagline {
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .hero .cta {
+      display: inline-flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-soft);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(124, 58, 237, 0.5), 0 0 60px rgba(124, 58, 237, 0.2);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--chalk);
+      border: 2px solid var(--stone-border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent-glow);
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, var(--bg-dark), transparent);
+      transition: background 0.3s;
+    }
+
+    nav.scrolled {
+      background: rgba(10, 10, 12, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      color: var(--chalk);
+      text-decoration: none;
+      text-shadow:
+        2px 2px 0 rgba(0, 0, 0, 0.9),
+        -1px -1px 0 rgba(0, 0, 0, 0.7),
+        0 0 15px rgba(124, 58, 237, 0.5),
+        0 2px 4px rgba(0, 0, 0, 0.5);
+      -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4);
+      paint-order: stroke fill;
+    }
+
+    .logo:hover {
+      color: var(--chalk);
+      text-shadow:
+        2px 2px 0 rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(124, 58, 237, 0.7),
+        0 0 35px rgba(139, 92, 246, 0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-glow);
+    }
+
+    /* Registro con Google */
+    .auth-box {
+      background: var(--bg-card);
+      border: 1px solid var(--stone-border);
+      padding: 2.5rem;
+      max-width: 420px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+
+    .auth-box p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .google-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.5rem;
+      background: #fff;
+      color: #3c4043;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .google-btn:hover {
+      background: #f8f9fa;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .google-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--chalk);
+    }
+
+    .user-badge img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+
+    /* Gimnasio */
+    .gym-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .gym-item {
+      background: var(--bg-card);
+      border: 1px solid var(--stone-border);
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .gym-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.1);
+    }
+
+    .gym-item span {
+      font-size: 1.75rem;
+      opacity: 0.9;
+    }
+
+    .gym-item h4 {
+      font-size: 1rem;
+      color: var(--chalk);
+      margin-bottom: 0.25rem;
+    }
+
+    .gym-item p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* Sections */
+    section {
+      padding: 6rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      letter-spacing: 0.1em;
+      color: var(--chalk);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 3rem;
+    }
+
+    /* Servicios */
+    #servicios {
+      background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.06));
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--stone-border);
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 40px rgba(124, 58, 237, 0.15);
+    }
+
+    .service-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--chalk);
+    }
+
+    .service-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Horarios */
+    #horarios {
+      padding: 6rem 3rem;
+    }
+
+    .schedule-box {
+      background: var(--bg-card);
+      border: 1px solid var(--stone-border);
+      padding: 2.5rem;
+      border-left: 4px solid var(--accent);
+      margin-top: 1.5rem;
+    }
+
+    .schedule-box p {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .schedule-box strong {
+      color: var(--accent);
+    }
+
+    /* CTA final */
+    .cta-section {
+      text-align: center;
+      padding: 8rem 3rem;
+      background: 
+        linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.12));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-section .cta-inner {
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .cta-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-section p:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .cta-section .btn {
+      display: inline-block;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--stone-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Botón flotante WhatsApp */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #25d366;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .whatsapp-float:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 24px rgba(37, 211, 102, 0.6);
+      color: #fff;
+    }
+
+    .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        gap: 1.5rem;
+      }
+
+      section {
+        padding: 4rem 1.5rem;
+      }
+
+      .hero .tagline {
+        letter-spacing: 0.2em;
+        font-size: 1rem;
+      }
+
+      .hero .cta {
+        flex-direction: column;
+      }
+
+      .whatsapp-float span {
+        display: none;
+      }
+
+      .whatsapp-float {
+        padding: 0.85rem;
+        bottom: 1rem;
+        right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Chat WhatsApp: reemplazá 5491112345678 por tu número (código país + número sin +) -->
+  <a href="https://wa.me/5491112345678?text=Hola%2C%20tengo%20una%20consulta%20sobre%200verpass" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Consultas por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>Consultas por WhatsApp</span>
+  </a>
+
+  <nav id="nav">
+    <a href="#" class="logo">0verpass</a>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#gimnasio">Gimnasio</a></li>
+      <li><a href="#horarios">Horarios</a></li>
+      <li><a href="#registro">Registro</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <p class="tagline">Frente a las vías de Haedo</p>
+    <h1>0verpass</h1>
+    <p class="tagline">Sube. Suda. Supera.</p>
+    <div class="cta">
+      <a href="#contacto" class="btn btn-primary">Reserva tu sesión</a>
+      <a href="#servicios" class="btn btn-outline">Ver actividades</a>
+    </div>
+  </header>
+
+  <section id="servicios">
+    <h2 class="section-title">Qué ofrecemos</h2>
+    <p class="section-subtitle">Escalada en bloque, vías y cursos para todos los niveles</p>
+    <div class="services-grid">
+      <article class="service-card">
+        <div class="service-icon">🧗</div>
+        <h3>Búlder</h3>
+        <p>Muros de hasta 4,5 m sin cuerda. Más de 100 problemas que rotamos cada semana. Ideal para empezar o entrenar técnica.</p>
+      </article>
+      <article class="service-card">
+        <div class="service-icon">⛰️</div>
+        <h3>Vías con cuerda</h3>
+        <p>Paredes de hasta 12 m con aseguración. Diferentes grados para principiantes y escaladores experimentados.</p>
+      </article>
+      <article class="service-card">
+        <div class="service-icon">📚</div>
+        <h3>Cursos y talleres</h3>
+        <p>Iniciación, técnica, entrenamiento y escalada en familia. Monitores titulados y material incluido.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="gimnasio">
+    <h2 class="section-title">Gimnasio de escalada</h2>
+    <p class="section-subtitle">Zona de entrenamiento con equipamiento específico para escaladores</p>
+    <div class="gym-grid">
+      <article class="gym-item">
+        <span>🖐️</span>
+        <div>
+          <h4>Fingerboard / Tablón de dedos</h4>
+          <p>Diferentes tamaños de regletas para entrenar fuerza de dedos y antebrazo.</p>
+        </div>
+      </article>
+      <article class="gym-item">
+        <span>📐</span>
+        <div>
+          <h4>Pan Gullich / Campus board</h4>
+          <p>Escalera de campus y tablón para dinámicos y potencia de brazos.</p>
+        </div>
+      </article>
+      <article class="gym-item">
+        <span>🏋️</span>
+        <div>
+          <h4>Pesas y kettlebells</h4>
+          <p>Zona de fuerza general: mancuernas, barras y kettlebells para complementar.</p>
+        </div>
+      </article>
+      <article class="gym-item">
+        <span>🧘</span>
+        <div>
+          <h4>Mobility y estiramiento</h4>
+          <p>Espacio para movilidad, flexibilidad y recuperación entre bloques.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="horarios">
+    <h2 class="section-title">Horarios</h2>
+    <p class="section-subtitle">Abre todos los días</p>
+    <div class="schedule-box">
+      <p><strong>Lunes a viernes:</strong> 10:00 – 23:00</p>
+      <p><strong>Sábados y domingos:</strong> 09:00 – 21:00</p>
+      <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.95rem;">Primera vez: ven 30 min antes para el briefing de seguridad.</p>
+    </div>
+  </section>
+
+  <section id="registro">
+    <h2 class="section-title">Registro</h2>
+    <p class="section-subtitle">Creá tu cuenta para reservar, ver precios y sumarte a la comunidad</p>
+    <div class="auth-box">
+      <p>Entrá con tu cuenta de Google en un solo clic.</p>
+      <div id="google-btn-wrap"></div>
+      <div id="user-badge" class="user-badge" style="display: none;">
+        <img id="user-avatar" src="" alt="">
+        <span id="user-name"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" id="contacto">
+    <div class="cta-inner">
+      <h2>¿Listo para subir?</h2>
+      <p>Reserva tu visita, pregunta por precios o regala una sesión. Te respondemos en menos de 24 h.</p>
+      <p style="font-size: 0.95rem;">Frente a las vías de Haedo — Buenos Aires</p>
+      <p><a href="mailto:fondo@overpass.com" class="btn btn-primary">fondo@overpass.com</a></p>
+      <p style="font-size: 0.9rem;">O escribinos por <a href="https://wa.me/5491112345678?text=Hola%2C%20tengo%20una%20consulta%20sobre%200verpass" target="_blank" rel="noopener" style="color: #25d366;">WhatsApp</a> para consultas al instante.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 0verpass — Muro de escalada · Frente a las vías de Haedo</p>
+    <p><a href="tel:+5491112345678">+54 9 11 1234-5678</a></p>
+  </footer>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Reemplazá con tu Client ID de Google Cloud Console (APIs & Services > Credentials)
+    const GOOGLE_CLIENT_ID = 'TU_CLIENT_ID_GOOGLE.apps.googleusercontent.com';
+
+    function renderGoogleBtn() {
+      if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('TU_')) {
+        document.getElementById('google-btn-wrap').innerHTML =
+          '<a href="mailto:fondo@overpass.com" class="btn btn-primary" style="display: inline-block;">Registrarse por email</a>' +
+          '<p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">Para activar «Continuar con Google»: creá credenciales en <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> y reemplazá <code>GOOGLE_CLIENT_ID</code> en el código.</p>';
+        return;
+      }
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: false
+      });
+      google.accounts.id.renderButton(document.getElementById('google-btn-wrap'), {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        width: 280
+      });
+    }
+
+    function handleCredentialResponse(response) {
+      const payload = JSON.parse(atob(response.credential.split('.')[1]));
+      document.getElementById('user-avatar').src = payload.picture || '';
+      document.getElementById('user-name').textContent = payload.name || payload.email;
+      document.getElementById('user-badge').style.display = 'inline-flex';
+      document.getElementById('google-btn-wrap').style.display = 'none';
+      localStorage.setItem('0verpass_user', JSON.stringify({ name: payload.name, email: payload.email, picture: payload.picture }));
+    }
+
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem('0verpass_user');
+      if (saved) {
+        const u = JSON.parse(saved);
+        document.getElementById('user-avatar').src = u.picture || '';
+        document.getElementById('user-name').textContent = u.name || u.email;
+        document.getElementById('user-badge').style.display = 'inline-flex';
+        document.getElementById('google-btn-wrap').innerHTML = '<button type="button" class="btn btn-outline" onclick="localStorage.removeItem(\'0verpass_user\'); location.reload();">Cerrar sesión</button>';
+      } else {
+        renderGoogleBtn();
+      }
+    });
+  </script>
+</body>
+</html>
